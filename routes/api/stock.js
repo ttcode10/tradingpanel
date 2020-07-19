@@ -6,7 +6,7 @@ const { response } = require('express');
 
 
 // @route    GET api/stock/:symbol
-// @desc     Get specific stock daily chart
+// @desc     Get specific stock daily chart by symbol
 // @access   Public
 router.get('/', (req, res) => res.send('Stock route'));
 
