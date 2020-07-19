@@ -1,4 +1,0 @@
-{
-  "mongoURI": "mongodb://admin:admin@cluster0-shard-00-00.vqmyd.mongodb.net:27017,cluster0-shard-00-01.vqmyd.mongodb.net:27017,cluster0-shard-00-02.vqmyd.mongodb.net:27017/TradingPanel?ssl=true&replicaSet=atlas-bdr0lw-shard-0&authSource=admin&retryWrites=true&w=majority",
-  "alphaAdvantageSecret": "69CC2P9CYOEXZH6T"
-}
