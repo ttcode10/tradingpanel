@@ -49,7 +49,7 @@ router.post('/:symbol', [
       return res.status(400).json({errors: errors.array()});
     }
 
-    const symbol = req.params.symbol;
+    const symbol = req.params.symbol.toLowerCase();
 
     const stockField = {}
     if(symbol) stockField.symbol = symbol;
