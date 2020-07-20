@@ -68,19 +68,44 @@ router.post('/:symbol', [
       await stockProfile.save();
       return res.json(stockProfile);
 
-
-      request(options, (error, response, body) => {
-        if(error) console.log(error);
-        if(response.statusCode !== 200) {
-          return res.status(404).json({message: 'No data found'});
-        }
-        return res.json(JSON.parse(body));
-      });
     } catch (error) {
       console.log(error.message);
       return res.status(500).send('Server error');
     }
 });
+
+
+// @route    POST api/stock/:symbol/vote/bullish
+// @desc     Create bullish vote
+// @access   Private
+router.post('/:symbol/vote/bullish', async (req, res) => {
+  
+  
+  try {
+    // Find the stock to vote
+    const stock = await Stock.findById(req.params.symbol);
+    
+    // Check if voted
+    if(stock.bullish.map(item => item.user.toString === req.user.id)) {
+      // Alert if voted
+      return res.status(400).json({message: 'You already voted'});
+    } else {
+      // Bullish vote + 1
+      const voter = {};
+      voter.user = req.user.id;
+      voter.name = req.user.name;
+      voter.avatar = req.user.avatar;
+      voter.date = new Date();
+      stock.bullish.unshift(voter);
+
+      await stock.save();
+      return res.json(stock.bullish);
+    }
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).send('Server error');
+  }
+})
 
 
 
