@@ -79,12 +79,10 @@ router.post('/:symbol', [
 // @desc     Create bullish vote
 // @access   Private
 router.post('/:symbol/vote/bullish', async (req, res) => {
-  
-  
   try {
     // Find the stock to vote
     const stock = await Stock.findById(req.params.symbol);
-    
+
     // Check if voted
     if(stock.bullish.map(item => item.user.toString === req.user.id)) {
       // Alert if voted
