@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const gravatar = require('gravatar');
 
 const User = require('./../../models/User');
-const { validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 
+
+// router.get('/register', (req, res) => {return res.json('user register route')});
 
 // @route    POST api/user/register
 // @desc     User register
@@ -15,37 +18,31 @@ router.post('/register', [
   check('name').notEmpty().withMessage('Name is required'),
   check('email')
     .notEmpty().withMessage('Email is required')
-    .isEmail().withMessage('Invalid email address')
-    .custom(value=> {
-      return User.findByEmail(value).then(user => {
-        if(user) {
-          return Promise.reject('Email already in use');
-        }
-      });
-    }),
+    .isEmail().withMessage('Invalid email address'),
   check('password')
     .notEmpty().withMessage('Password is required')
-    .matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$').withMessage('Minimum 6 characters, at least one uppercase letter, one lowercase letter and one number'),
+    .matches('(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}').withMessage('Minimum 6 characters, at least one uppercase letter, one lowercase letter and one number'),
   check('confirmPassword')
     .notEmpty().withMessage('Confirm password is required')
     .custom((value, {req}) => {
       if(value !== req.body.password) {
-        throw new Error('Password confirmation is not match');
+        throw new Error('Password not match')
       }
-    }),
-  check('email', 'Email is required').notEmpty(),
+      return true;
+    })
 ], async (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) {
-    return res.status(400).json({errors.array()});
+    return res.status(400).json({errors: errors.array()});
   }
 
+  const { name, email, password } = req.body;
+
   try {
-    const user = await User.findById(email);
+    const user = await User.findOne({email});
     if(user) {
       return res.status(400).json({message: 'User already exists'});
     } else {
-      const { name, email, password } = req.body;
 
       // Get user avatar
       const avatar = gravatar.url(email, {
