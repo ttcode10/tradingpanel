@@ -45,13 +45,13 @@ router.post('/', [
     // Find user if exists
     const user = await User.findOne({email});
     if(!user) {
-      return res.status(400).json({errors: [{message: 'Invalid email or password'}]});
+      return res.status(400).json({errors: 'Invalid email or password'});
     } else {
 
       // Compare input password and stored password
       const isMatch = await bcrypt.compare(password, user.password);
       if(!isMatch) {
-        return res.status(500).json({errors: [{message: 'Invalid email or password'}]})
+        return res.status(500).json({errors: 'Invalid email or password'});
       }
 
       const payload = {
